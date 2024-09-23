@@ -59,7 +59,9 @@ const CurencyBox = (props: CurencyProps) => {
           onChange={handleCurrencyChange}
         >
           {CURRENCY_LIST.map((currencyItem: string) => (
-            <MenuItem value={currencyItem}>{currencyItem}</MenuItem>
+            <MenuItem key={`${currencyItem}-${label}`} value={currencyItem}>
+              {currencyItem}
+            </MenuItem>
           ))}
         </Select>
         <TextField
