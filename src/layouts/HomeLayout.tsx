@@ -20,7 +20,7 @@ export default memo(HomeLayout)
 
 const BlueBackGround = styled(Box)`
   width: 100%;
-  height: 50vh;
+  height: 60vh;
   background-color: #000053;
   color: #ffffff;
 `

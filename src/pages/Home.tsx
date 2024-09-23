@@ -137,7 +137,7 @@ const Home = () => {
                   size="large"
                   onClick={handleReverseCurrencyClick}
                 >
-                  <CompareArrows />
+                  <CompareArrows sx={{ width: 50, height: 50 }} />
                 </IconButton>
               </Tooltip>
             </Box>
@@ -165,6 +165,7 @@ const StyledCard = styled(Card)`
   height: 40%;
   border-radius: 30px;
   padding: 0rem 1rem 0rem 1rem;
+  margin-top: 100px;
 
   display: flex;
   justify-content: space-between;
@@ -188,5 +189,5 @@ const ButtonContainer = styled(Box)`
 
   display: flex;
   justify-content: center;
-  margin-top: 13%;
+  margin-top: 11%;
 `

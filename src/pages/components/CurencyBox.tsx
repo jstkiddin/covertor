@@ -51,7 +51,7 @@ const CurencyBox = (props: CurencyProps) => {
   return (
     <CurrencyBox>
       <StyledFormControl fullWidth>
-        <Typography>{label}</Typography>
+        <Typography fontSize="1.5rem">{label}</Typography>
         <Select
           labelId="demo-simple-select-label"
           id="demo-simple-select"

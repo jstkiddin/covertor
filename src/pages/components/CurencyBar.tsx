@@ -13,14 +13,14 @@ const CurencyBar = ({ currency }: CurrencyBoxProps) => {
     <>
       <CurrentCurencyBar>
         <CurrencyBlock>
-          <ReactCountryFlag countryCode="US" svg />
+          <ReactCountryFlag countryCode="US" svg style={{ width: 40 }} />
           <CurrencyName>USD:</CurrencyName>
           <CurrencyValue>
             {currency[0]?.rateBuy ?? 0} | {currency[0]?.rateSell ?? 0}
           </CurrencyValue>
         </CurrencyBlock>
         <CurrencyBlock>
-          <ReactCountryFlag countryCode="EU" svg />
+          <ReactCountryFlag countryCode="EU" svg style={{ width: 40 }} />
           <CurrencyName> EUR:</CurrencyName>
           <CurrencyValue>
             {currency[1]?.rateBuy ?? 0} | {currency[1]?.rateSell ?? 0}
@@ -28,11 +28,11 @@ const CurencyBar = ({ currency }: CurrencyBoxProps) => {
         </CurrencyBlock>
       </CurrentCurencyBar>
       <TextBox>
-        <Box sx={{ textAlign: 'center' }}>
-          <Typography fontWeight="600" fontSize="2rem">
+        <Box sx={{ textAlign: 'center', marginTop: 8 }}>
+          <Typography fontWeight="600" fontSize="3rem">
             Fast. Accurate. Reliable.
           </Typography>
-          <Typography>Start converting now!</Typography>
+          <Typography fontSize="1.5rem">Start converting now!</Typography>
         </Box>
       </TextBox>
     </>
@@ -42,20 +42,25 @@ const CurencyBar = ({ currency }: CurrencyBoxProps) => {
 export default memo(CurencyBar)
 
 const CurrentCurencyBar = styled(Box)`
-  height: 7%;
+  height: 10%;
   width: 100%;
 
   position: absolute;
   top: 0;
   background-color: #000035;
+  gap: 6rem;
 
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
   align-items: center;
 `
 
-const CurrencyName = styled(Typography)``
-const CurrencyValue = styled(Typography)``
+const CurrencyName = styled(Typography)`
+  font-size: 1.5rem;
+`
+const CurrencyValue = styled(Typography)`
+  font-size: 1.5rem;
+`
 
 const CurrencyBlock = styled(Box)`
   display: flex;
