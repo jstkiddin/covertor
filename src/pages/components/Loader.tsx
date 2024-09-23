@@ -1,9 +1,9 @@
-import { Box, LinearProgress, styled } from '@mui/material'
+import { Box, CircularProgress, styled } from '@mui/material'
 
 const Loader = () => {
   return (
     <StyledBox>
-      <LinearProgress />
+      <CircularProgress />
     </StyledBox>
   )
 }
@@ -12,11 +12,12 @@ export default Loader
 
 const StyledBox = styled(Box)`
   position: absolute;
-  width: 100%;
+  width: 100vw;
   height: 100vh;
   z-index: 4;
-  background-color: rgba(255, 255, 255, 0.5);
+  background-color: #ffffff;
 
   display: flex;
-  alighn-items: center;
+  align-items: center;
+  justify-content: center;
 `

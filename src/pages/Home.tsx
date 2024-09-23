@@ -12,16 +12,33 @@ import CurencyBar from './components/CurencyBar'
 import CurencyBox from './components/CurencyBox'
 import { CURRENCY_CODES } from '../constants'
 import { CurencyType } from '../types/types'
-import { useCurrency } from '../services/getCurrency'
 import Loader from './components/Loader'
+import axios from 'axios'
 
 const Home = () => {
-  const { data, isLoading } = useCurrency()
+  const [currencyList, setCurrencyList] = useState([
+    { currencyCodeA: 0, currencyCodeB: 0, date: 0, rateBuy: 0, rateSell: 0 },
+  ])
 
-  const [fromCurrency, setFromCurrency] = useState('USD')
-  const [toCurrency, setToCurrency] = useState('EUR')
-  const [amount, setAmount] = useState('0')
-  const [conversionResult, setConversionResult] = useState('0')
+  const [fromCurrency, setFromCurrency] = useState<string>('USD')
+  const [toCurrency, setToCurrency] = useState<string>('EUR')
+  const [amount, setAmount] = useState<string>('0')
+  const [conversionResult, setConversionResult] = useState<string>('0')
+
+  useEffect(() => {
+    const fetchRates = async () => {
+      try {
+        const response = await axios.get(
+          'https://api.monobank.ua/bank/currency'
+        )
+        setCurrencyList(response.data)
+      } catch (error) {
+        console.error('Error fetching UAH rate:', error)
+      }
+    }
+
+    fetchRates()
+  }, [])
 
   useEffect(() => {
     const res = calculateFromTo(amount)
@@ -29,13 +46,9 @@ const Home = () => {
   }, [fromCurrency, toCurrency])
 
   const handleReverseCurrencyClick = () => {
-    console.log('01', fromCurrency, toCurrency)
-
     const currencyFrom = fromCurrency
     setFromCurrency(toCurrency)
     setToCurrency(currencyFrom)
-
-    console.log('1', fromCurrency, toCurrency)
   }
 
   const handleFromCurrencyChange = useCallback(
@@ -54,46 +67,74 @@ const Home = () => {
 
   const calculateFromTo = useCallback(
     (value: string) => {
-      const fromCode = CURRENCY_CODES[fromCurrency]
-      const toCode = CURRENCY_CODES[toCurrency]
+      console.log(currencyList)
+      if (currencyList.length > 1) {
+        const fromCode = CURRENCY_CODES[fromCurrency]
+        const toCode = CURRENCY_CODES[toCurrency]
 
-      const forwardExchange: CurencyType | undefined = data.find(
-        (currencyItem: CurencyType) =>
-          currencyItem.currencyCodeA === fromCode &&
-          currencyItem.currencyCodeB === toCode
-      )
-      const reverseExchage: CurencyType | undefined = data.find(
-        (currencyItem: CurencyType) =>
-          currencyItem.currencyCodeA === toCode &&
-          currencyItem.currencyCodeB === fromCode
-      )
+        const forwardExchange: CurencyType | undefined = currencyList.find(
+          (currencyItem: CurencyType) =>
+            currencyItem.currencyCodeA === fromCode &&
+            currencyItem.currencyCodeB === toCode
+        )
+        const reverseExchage: CurencyType | undefined = currencyList.find(
+          (currencyItem: CurencyType) =>
+            currencyItem.currencyCodeA === toCode &&
+            currencyItem.currencyCodeB === fromCode
+        )
 
-      const exchangeRate = forwardExchange?.rateBuy
-        ? forwardExchange.rateBuy
-        : reverseExchage?.rateSell
-        ? reverseExchage.rateSell
-        : 1
+        const exchangeRate = forwardExchange?.rateBuy
+          ? forwardExchange.rateBuy * parseFloat(value)
+          : reverseExchage?.rateSell
+          ? parseFloat(value) / reverseExchage.rateSell
+          : parseFloat(value) * 1
 
-      console.log('2', fromCurrency, toCurrency, fromCode, toCode, exchangeRate)
+        return exchangeRate.toString()
+      }
 
-      return (parseInt(value) * exchangeRate).toString()
+      return '0'
     },
     [fromCurrency, toCurrency]
   )
 
-  const calculateToFrom = (value: string) => {
-    const fromCode = CURRENCY_CODES[fromCurrency]
-    const toCode = CURRENCY_CODES[toCurrency]
-    return (parseInt(value) * 2).toString()
-  }
+  const calculateToFrom = useCallback(
+    (value: string) => {
+      if (currencyList.length > 1) {
+        const fromCode = CURRENCY_CODES[fromCurrency]
+        const toCode = CURRENCY_CODES[toCurrency]
 
-  if (isLoading && !data) {
+        const forwardExchange: CurencyType | undefined = currencyList.find(
+          (currencyItem: CurencyType) =>
+            currencyItem.currencyCodeA === fromCode &&
+            currencyItem.currencyCodeB === toCode
+        )
+        const reverseExchage: CurencyType | undefined = currencyList.find(
+          (currencyItem: CurencyType) =>
+            currencyItem.currencyCodeA === toCode &&
+            currencyItem.currencyCodeB === fromCode
+        )
+
+        const exchangeRate = forwardExchange?.rateSell
+          ? parseFloat(value) / forwardExchange.rateSell
+          : reverseExchage?.rateBuy
+          ? parseFloat(value) * reverseExchage.rateBuy
+          : parseFloat(value) * 1
+
+        return exchangeRate.toString()
+      }
+      return '0'
+    },
+    [fromCurrency, toCurrency]
+  )
+
+  if (currencyList.length < 2) {
     return <Loader />
   }
 
   return (
     <>
-      <CurencyBar currency={data} />
+      <CurencyBar currency={currencyList} />
+
       <CardContainer>
         <StyledCard>
           <CurencyBox
